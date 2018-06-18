@@ -1,9 +1,3 @@
-// Wire Slave Receiver
-
-// Receives data as an I2C/TWI slave device
-
-
-
 #include <Wire.h>
 #define SPEED 200
 #define DELAY 100
