@@ -2,105 +2,116 @@
 #define SPEED 200
 #define DELAY 100
 
+#define FORWARD 0
+#define BACKWARD 1 
+#define LEFT 2
+#define RIGHT 3
+#define BRAKE 4
+
+#define PIN_MOTOR_A 12
+#define BRAKE_MOTOR_A 9
+#define PIN_MOTOR_B 13
+#define BRAKE_MOTOR_B 8
+#define PIN_SPEED_A 3
+#define PIN_SPEED_B 11
+
 void move_backward(){
   
-  digitalWrite(12, HIGH);
-  digitalWrite(9, LOW);
-  digitalWrite(13, HIGH);
-  digitalWrite(8, LOW);
-  analogWrite(3, SPEED);
-  analogWrite(11, SPEED);
+  digitalWrite(PIN_MOTOR_A, HIGH);
+  digitalWrite(BRAKE_MOTOR_A, LOW);
+  digitalWrite(PIN_MOTOR_B, HIGH);
+  digitalWrite(BRAKE_MOTOR_B, LOW);
+  analogWrite(PIN_SPEED_A, SPEED);
+  analogWrite(PIN_SPEED_B, SPEED);
   delay(DELAY);
 }
 
 void move_forward(){
   
-  digitalWrite(12, LOW);
-  digitalWrite(9, LOW);
-  digitalWrite(13, LOW);
-  digitalWrite(8, LOW);
-  analogWrite(3, SPEED);
-  analogWrite(11, SPEED);
+  digitalWrite(PIN_MOTOR_A, LOW);
+  digitalWrite(BRAKE_MOTOR_A, LOW);
+  digitalWrite(PIN_MOTOR_B, LOW);
+  digitalWrite(BRAKE_MOTOR_B, LOW);
+  analogWrite(PIN_SPEED_A, SPEED);
+  analogWrite(PIN_SPEED_B, SPEED);
   delay(DELAY);
 }
 
 void brake(){
 
-  digitalWrite(9, HIGH);
-  digitalWrite(8, HIGH);
+  digitalWrite(BRAKE_MOTOR_A, HIGH);
+  digitalWrite(BRAKE_MOTOR_B, HIGH);
 }
 
 void turn_left(){
 
-  digitalWrite(12, HIGH);
-  digitalWrite(9, LOW);
-  digitalWrite(13, LOW);
-  digitalWrite(8, LOW);
-  analogWrite(3, SPEED);
-  analogWrite(11, SPEED);
+  digitalWrite(PIN_MOTOR_A, HIGH);
+  digitalWrite(BRAKE_MOTOR_A, LOW);
+  digitalWrite(PIN_MOTOR_B, LOW);
+  digitalWrite(BRAKE_MOTOR_B, LOW);
+  analogWrite(PIN_SPEED_A, SPEED);
+  analogWrite(PIN_SPEED_B, SPEED);
   delay(DELAY);
 }
 
 void turn_right(){
 
-  digitalWrite(12, LOW);
-  digitalWrite(9, LOW);
-  digitalWrite(13, HIGH);
-  digitalWrite(8, LOW);
-  analogWrite(3, SPEED);
+  digitalWrite(PIN_MOTOR_A, LOW);
+  digitalWrite(BRAKE_MOTOR_A, LOW);
+  digitalWrite(PIN_MOTOR_B, HIGH);
+  digitalWrite(BRAKE_MOTOR_B, LOW);
+  analogWrite(PIN_SPEED_A, SPEED);
   analogWrite(11, SPEED);
   delay(DELAY);
 }
 
 void setup() {
   // Motor B
-  pinMode(13, OUTPUT);
-  pinMode(8, OUTPUT);
+  pinMode(PIN_MOTOR_B, OUTPUT);
+  pinMode(BRAKE_MOTOR_B, OUTPUT);
 
   // Motor A
-  pinMode(12, OUTPUT);
-  pinMode(9, OUTPUT);
+  pinMode(PIN_MOTOR_A, OUTPUT);
+  pinMode(BRAKE_MOTOR_A, OUTPUT);
   
   Wire.begin(8);                // join i2c bus with address #8
   Wire.onReceive(receiveEvent); // register event
   Serial.begin(9600);           // start serial for output  
-  Serial.println("Starting.....");
+  Serial.println("Starting...");
 }
 
 void loop() {
   delay(15);
 }
 
-// function that executes whenever data is received from master
-// this function is registered as an event, see setup()
 void receiveEvent(int howMany) {
   brake();
   while (1 < Wire.available()) { // loop through all but the last
     char c = Wire.read(); // receive byte as a character
     Serial.print(c);         // print the character
   }
-  int x = Wire.read();    // receive byte as an integer
-  Serial.println(x);         // print the integer
+  int instruction = Wire.read();    // receive byte as an integer
+  Serial.println(instruction);         // print the integer
 
 //moves
-  switch(x){
-    case 0:
+  switch(instruction){
+    case FORWARD:
       move_forward();
       break;
       
-     case 1:
+     case BACKWARD:
       move_backward();
       break;
       
-     case 2:
+     case LEFT:
       turn_left();
       break;
       
-     case 3:
+     case RIGHT:
       turn_right();
       break;
       
-     case 4:
+     case BRAKE:
       brake();
       break;  
   }
