@@ -46,21 +46,14 @@ void loop() {
   uint16_t blocks;
   char buf[32]; 
     
-  // grab blocks!
   blocks = pixy.getBlocks();
   
-  // If there are detect blocks, print them!
   if(blocks){
 
-   // Serial.println("1");
     i++;
     
-    // do this (print) every 50 frames because printing every
-    // frame would bog down the Arduino
     if (i % 2 == 0){
 
-      //  Serial.println("1");
-      // print_info(buf, pixy, blocks);
 
       for(j = 0; j < blocks; j++){
       
@@ -68,19 +61,15 @@ void loop() {
 
           if(pixy.blocks[j].x > (1 + MARGIN) * (int)X_CENTER){
             
-            // print_info(buf, pixy, blocks);
             x = RIGHT;          
           }else if(pixy.blocks[j].x < (1 - MARGIN) * (int)X_CENTER){
 
-            // print_info(buf, pixy, blocks);
             x = LEFT;
           }else if(pixy.blocks[j].width > STOP_WIDTH){
 
-            //print_info(buf, pixy, blocks);
             x = BRAKE;
           }else{
 
-            // print_info(buf, pixy, blocks);
             x = FORWARD;
           }
           
